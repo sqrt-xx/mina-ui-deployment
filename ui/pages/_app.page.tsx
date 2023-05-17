@@ -23,16 +23,27 @@ export default function App() {
   // -------------------------------------------------------
   // Do Setup
 
-  useEffect(() => {
-    (async () => {
-      if (!state.hasBeenSetup) {
-        const zkappWorkerClient = new ZkappWorkerClient();
+    useEffect(() => {
 
-        console.log('Loading SnarkyJS...');
-        await zkappWorkerClient.loadSnarkyJS();
-        console.log('done');
+        async function timeout(seconds: number): Promise<void> {
+            return new Promise<void>((resolve) => {
+                setTimeout(() => {
+                    resolve();
+                }, seconds * 1000);
+            });
+        }
+        (async () => {
+            if (!state.hasBeenSetup) {
+                console.log("Initializing worker client.");
+                const zkappWorkerClient = new ZkappWorkerClient();
 
-        await zkappWorkerClient.setActiveInstanceToBerkeley();
+
+                console.log('Loading SnarkyJS...');
+                await zkappWorkerClient.loadSnarkyJS();
+                await timeout(15);
+                console.log('done');
+
+                await zkappWorkerClient.setActiveInstanceToBerkeley();
 
         const mina = (window as any).mina;
 
