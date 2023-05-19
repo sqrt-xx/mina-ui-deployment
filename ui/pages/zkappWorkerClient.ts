@@ -1,4 +1,4 @@
-import { fetchAccount, PublicKey, Field } from "snarkyjs";
+import { fetchAccount, PrivateKey, PublicKey, Field } from "snarkyjs";
 
 import type {
   ZkappWorkerRequest,
@@ -43,12 +43,22 @@ export default class ZkappWorkerClient {
     return Field.fromJSON(JSON.parse(result as string));
   }
 
+  createDeployContract(privateKey: PrivateKey) {
+    return this._call("createDeployContract", {
+      privateKey58: privateKey.toBase58()
+    });
+  }
+
   createUpdateTransaction() {
     return this._call("createUpdateTransaction", {});
   }
 
   proveUpdateTransaction() {
     return this._call("proveUpdateTransaction", {});
+  }
+
+  signDeployTransaction() {
+      return this._call("signDeployTransaction", {});
   }
 
   async getTransactionJSON() {

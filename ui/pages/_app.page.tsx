@@ -4,7 +4,7 @@ import './reactCOIServiceWorker';
 
 import ZkappWorkerClient from './zkappWorkerClient';
 
-import { PublicKey, Field } from 'snarkyjs';
+import { PrivateKey, PublicKey, Field } from 'snarkyjs';
 
 let transactionFee = 0.1;
 
@@ -190,9 +190,8 @@ export default function App() {
     setState({ ...state, candidateContractPK });
   }
 
-  async function updateContractChange(event){
+  async function updateContractChange(event) {
     const contractPK = state.candidateContractPK;
-    console.log(contractPK)
     const zkappPublicKey = PublicKey.fromBase58(
       contractPK
     );
@@ -209,6 +208,48 @@ export default function App() {
     setState({ ...state, contractPK, zkappPublicKey, currentNum });
   }
 
+  async function deployNewContract(event) {
+    setState({ ...state, creatingTransaction: true });
+    console.log('sending a deployment transaction...');
+
+    await state.zkappWorkerClient!.fetchAccount({
+      publicKey: state.publicKey!,
+    });
+
+    const privateKey: PrivateKey = PrivateKey.random();
+    console.log('generated new contract private key...');
+    console.log(privateKey.toBase58);
+
+    const zkappPublicKey = privateKey.toPublicKey();
+    const contractPK = zkappPublicKey.toBase58();
+    console.log('its corresponding public key is...');
+    console.log(contractPK);
+
+    console.log('creating deployment transaction...');
+    await state.zkappWorkerClient!.createDeployContract(privateKey);
+
+    console.log('creating the signature...');
+    await state.zkappWorkerClient!.signDeployTransaction();
+
+    console.log('getting Transaction JSON...');
+    const transactionJSON = await state.zkappWorkerClient!.getTransactionJSON();
+
+    console.log('requesting send transaction...');
+    const { hash } = await (window as any).mina.sendTransaction({
+      transaction: transactionJSON,
+      feePayer: {
+        fee: transactionFee,
+        memo: '',
+      },
+    });
+
+    console.log(
+      'See transaction at https://berkeley.minaexplorer.com/transaction/' + hash
+    );
+
+    setState({ ...state, creatingTransaction: false, contractPK, zkappPublicKey });
+  }
+
   const smartContractLink =
     'https://berkeley.minaexplorer.com/wallet/' + state.contractPK;
   let setupSmartContract;
@@ -220,6 +261,7 @@ export default function App() {
           onChange={handleSmartContractChange}
           value={state.candidateContractPK}></input>
         <button onClick={updateContractChange}>set contract</button>
+        <button onClick={deployNewContract}>deploy new</button>
       </div>
     );
     if (state.contractPK != '') {
