@@ -1,10 +1,10 @@
-import { Mina, isReady, PublicKey, fetchAccount } from 'snarkyjs';
+import { Mina, PublicKey, fetchAccount } from "snarkyjs";
 
 type Transaction = Awaited<ReturnType<typeof Mina.transaction>>;
 
 // ---------------------------------------------------------------------------------------
 
-import type { Add } from '../../contracts/src/Add';
+import type { Add } from "../../../contracts/src/Add";
 
 const state = {
   Add: null as null | typeof Add,
@@ -15,17 +15,15 @@ const state = {
 // ---------------------------------------------------------------------------------------
 
 const functions = {
-  loadSnarkyJS: async (args: {}) => {
-    await isReady;
-  },
   setActiveInstanceToBerkeley: async (args: {}) => {
     const Berkeley = Mina.Network(
-      'https://proxy.berkeley.minaexplorer.com/graphql'
+      "https://proxy.berkeley.minaexplorer.com/graphql"
     );
+    console.log("Created Berkeley");
     Mina.setActiveInstance(Berkeley);
   },
   loadContract: async (args: {}) => {
-    const { Add } = await import('../../contracts/build/src/Add.js');
+    const { Add } = await import("../../../contracts/build/src/Add.js");
     state.Add = Add;
   },
   compileContract: async (args: {}) => {
@@ -71,17 +69,15 @@ export type ZkappWorkerReponse = {
   id: number;
   data: any;
 };
-if (process.browser) {
-  addEventListener(
-    'message',
-    async (event: MessageEvent<ZkappWorkerRequest>) => {
-      const returnData = await functions[event.data.fn](event.data.args);
 
-      const message: ZkappWorkerReponse = {
-        id: event.data.id,
-        data: returnData,
-      };
-      postMessage(message);
-    }
-  );
-}
+addEventListener("message", async (event: MessageEvent<ZkappWorkerRequest>) => {
+  const returnData = await functions[event.data.fn](event.data.args);
+
+  const message: ZkappWorkerReponse = {
+    id: event.data.id,
+    data: returnData,
+  };
+  postMessage(message);
+});
+
+console.log("Worker Initialized Successfully.");
