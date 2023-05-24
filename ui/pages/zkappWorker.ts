@@ -47,6 +47,7 @@ const functions = {
           state.zkapp!.deploy();
           state.zkapp!.requireSignature();
       });
+    transaction.sign([zkAppPrivateKey]);
     state.transaction = transaction;
   },
   getNum: async (args: {}) => {
@@ -66,7 +67,8 @@ const functions = {
   proveUpdateTransaction: async (args: {}) => {
     await state.transaction!.prove();
   },
-  getTransactionJSON: async (args: {}) => {
+    getTransactionJSON: async (args: {}) => {
+    console.log(state.transaction!.toPretty());
     return state.transaction!.toJSON();
   },
 };
