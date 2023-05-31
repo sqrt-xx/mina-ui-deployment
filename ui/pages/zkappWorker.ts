@@ -1,4 +1,4 @@
-import { Mina, PrivateKey, PublicKey, fetchAccount } from "snarkyjs";
+import { Mina, PrivateKey, PublicKey, AccountUpdate, fetchAccount } from "snarkyjs";
 
 type Transaction = Awaited<ReturnType<typeof Mina.transaction>>;
 
@@ -37,16 +37,18 @@ const functions = {
     const publicKey = PublicKey.fromBase58(args.publicKey58);
     state.zkapp = new state.Add!(publicKey);
   },
-  createDeployContract: async (args: { privateKey58: string }) => {
+    createDeployContract: async (
+        args: { privateKey58: string, feePayerAddress58: string }) => {
+    const feePayer: PublicKey = PublicKey.fromBase58(
+        args.feePayerAddress58);
     const zkAppPrivateKey: PrivateKey = PrivateKey.fromBase58(args.privateKey58);
-    let transactionFee = 100_000_000;
     state.zkapp = new state.Add!(zkAppPrivateKey.toPublicKey());
     const transaction = await Mina.transaction(
-      { fee: transactionFee },
+      feePayer,
       () => {
-          state.zkapp!.deploy();
-          state.zkapp!.requireSignature();
-      });
+        AccountUpdate.fundNewAccount(feePayer);
+        state.zkapp!.deploy();
+    });
     transaction.sign([zkAppPrivateKey]);
     state.transaction = transaction;
   },
@@ -59,10 +61,6 @@ const functions = {
       state.zkapp!.update();
     });
     state.transaction = transaction;
-  },
-  signDeployTransaction: async (args: {}) => {
-    // TODO need to figure out how to use AURO to sign this tx
-    console.log('TODO sign tx using AURO')
   },
   proveUpdateTransaction: async (args: {}) => {
     await state.transaction!.prove();

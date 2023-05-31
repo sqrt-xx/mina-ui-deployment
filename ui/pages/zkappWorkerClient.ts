@@ -43,9 +43,10 @@ export default class ZkappWorkerClient {
     return Field.fromJSON(JSON.parse(result as string));
   }
 
-  createDeployContract(privateKey: PrivateKey) {
+  createDeployContract(privateKey: PrivateKey, feePayer: PublicKey) {
     return this._call("createDeployContract", {
-      privateKey58: privateKey.toBase58()
+      privateKey58: privateKey.toBase58(),
+      feePayerAddress58: feePayer.toBase58()
     });
   }
 
@@ -55,10 +56,6 @@ export default class ZkappWorkerClient {
 
   proveUpdateTransaction() {
     return this._call("proveUpdateTransaction", {});
-  }
-
-  signDeployTransaction() {
-      return this._call("signDeployTransaction", {});
   }
 
   async getTransactionJSON() {

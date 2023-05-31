@@ -226,7 +226,8 @@ export default function App() {
     console.log(contractPK);
 
     console.log('creating deployment transaction...');
-    await state.zkappWorkerClient!.createDeployContract(privateKey);
+    await state.zkappWorkerClient!.createDeployContract(
+      privateKey, state.publicKey);
 
     console.log('creating the signature...');
     await state.zkappWorkerClient!.signDeployTransaction();
