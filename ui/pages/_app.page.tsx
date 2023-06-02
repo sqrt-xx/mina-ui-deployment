@@ -19,7 +19,8 @@ export default function App() {
     zkappPublicKey: null as null | PublicKey,
     creatingTransaction: false,
     contractPK: '',
-    candidateContractPK: ''
+    candidateContractPK: '',
+    deploymentTX: ''
   });
 
   // -------------------------------------------------------
@@ -229,9 +230,6 @@ export default function App() {
     await state.zkappWorkerClient!.createDeployContract(
       privateKey, state.publicKey);
 
-    console.log('creating the signature...');
-    await state.zkappWorkerClient!.signDeployTransaction();
-
     console.log('getting Transaction JSON...');
     const transactionJSON = await state.zkappWorkerClient!.getTransactionJSON();
 
@@ -248,7 +246,7 @@ export default function App() {
       'See transaction at https://berkeley.minaexplorer.com/transaction/' + hash
     );
 
-    setState({ ...state, creatingTransaction: false, contractPK, zkappPublicKey });
+    setState({ ...state, creatingTransaction: false, deploymentTX: hash, contractPK, zkappPublicKey });
   }
 
   const smartContractLink =
@@ -272,7 +270,16 @@ export default function App() {
     }
   }
 
-  let accountDoesNotExist;
+  let deploymentTXInfo;
+  if (state.deploymentTX !== '') {
+    const smartContractLink =
+      'https://berkeley.minaexplorer.com/transaction/' + state.deploymentTX;
+    deploymentTXInfo = (
+      <div>Your smart contract deployment transaction is <a href={smartContractDeploymentLink} target="_blank">{state.deploymentTX}</a></div>
+    );
+  }
+
+    let accountDoesNotExist;
   if (state.hasBeenSetup && !state.accountExists) {
     const faucetLink =
       'https://faucet.minaprotocol.com/?address=' + state.publicKey!.toBase58();
