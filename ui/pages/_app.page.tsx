@@ -69,7 +69,7 @@ export default function App() {
               await zkappWorkerClient.compileContract();
               console.log('zkApp compiled');
 
-              let zkappPublicKey = undefined;
+              let zkappPublicKey = null;
               let currentNum = -1;
 
               setState({
