@@ -343,6 +343,10 @@ export default function App() {
     );
   }
 
+  let promoContent = (
+    <div>This is a modified version of <a href="https://docs.minaprotocol.com/zkapps/tutorials/zkapp-ui-with-react" target="_blank" rel="noreferrer">Tutorial 4</a> capable of deploying zkApps! The source code and instructions are available in <a href="https://github.com/sqrt-xx/mina-ui-deployment" target="_blank" rel="noreferrer">this GitHub repository</a>. If you like it follow <a href="https://twitter.com/MarekNarozniak" target="_blank" rel="noreferrer">@MarekNarozniak</a> on Twitter and tweet me for tech support in case of trouble!</div>
+  );
+
   return (
     <div>
       {setup}
@@ -351,6 +355,7 @@ export default function App() {
       {interactionTXInfo}
       {accountDoesNotExist}
       {mainContent}
+      {promoContent}
     </div>
   );
 }
