@@ -12,6 +12,10 @@ Try it! Test it! Let me know if you like it on my [Twitter](https://twitter.com/
 
 ## Getting started
 
+You may find this zkApp deployed under the following URL
+
+https://sqrt-xx.github.io/mina-ui-deployment/
+
 Once you open the zkApp page you will see the SnarkyJS setup screen. Be patient, it will take a while, the zero-knowledge circuit is being compiled, wallet is connecting to the network etc...
 
 ![Setting up SnarkyJS](https://github.com/sqrt-xx/mina-ui-deployment/blob/main/screenshots/0.png?raw=true)
