@@ -76,7 +76,7 @@ export default function App() {
               console.log('zkApp compiled');
 
               let zkappPublicKey = null;
-              let currentNum = new Field(-1);
+              let currentNum = -1;
 
               setState({
                 ...state,
@@ -333,7 +333,7 @@ export default function App() {
   let mainContent;
   if (state.hasBeenSetup && state.accountExists && state.contractPK) {
     let numContent = 'unknown';
-    if (state.currentNum !== new Field(-1)) {
+    if (state.currentNum !== -1) {
       numContent = state.currentNum!.toString();
     }
     mainContent = (
