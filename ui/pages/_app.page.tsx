@@ -20,7 +20,8 @@ export default function App() {
     creatingTransaction: false,
     contractPK: '',
     candidateContractPK: '',
-    deploymentTX: ''
+    deploymentTX: '',
+    interactionTX: ''
   });
 
   // -------------------------------------------------------
@@ -126,6 +127,12 @@ export default function App() {
     console.log('getting Transaction JSON...');
     const transactionJSON = await state.zkappWorkerClient!.getTransactionJSON();
 
+    console.log('checking AURO connection')
+    const network = await window.mina.requestNetwork();
+    console.log(network); //  'Mainnet' , 'Devnet' , 'Berkeley' or 'Unknown'
+    const accounts = await window.mina.requestAccounts()
+    console.log(accounts);
+
     console.log('requesting send transaction...');
     const { hash } = await (window as any).mina.sendTransaction({
       transaction: transactionJSON,
@@ -139,7 +146,7 @@ export default function App() {
       'See transaction at https://berkeley.minaexplorer.com/transaction/' + hash
     );
 
-    setState({ ...state, creatingTransaction: false });
+    setState({ ...state, interactionTX: hash, creatingTransaction: false });
   };
 
   // -------------------------------------------------------
@@ -210,6 +217,13 @@ export default function App() {
   }
 
   async function deployNewContract(event) {
+    const mina = (window as any).mina;
+
+    if (mina == null) {
+      setState({ ...state, hasWallet: false });
+      return;
+    }
+
     setState({ ...state, creatingTransaction: true });
     console.log('sending a deployment transaction...');
 
@@ -233,6 +247,11 @@ export default function App() {
     console.log('getting Transaction JSON...');
     const transactionJSON = await state.zkappWorkerClient!.getTransactionJSON();
 
+    console.log('checking AURO connection')
+    const network = await window.mina.requestNetwork();
+    console.log(network); //  'Mainnet' , 'Devnet' , 'Berkeley' or 'Unknown'
+    const accounts = await window.mina.requestAccounts()
+    console.log(accounts);
     console.log('requesting send transaction...');
     const { hash } = await (window as any).mina.sendTransaction({
       transaction: transactionJSON,
@@ -272,14 +291,23 @@ export default function App() {
 
   let deploymentTXInfo;
   if (state.deploymentTX !== '') {
-    const smartContractLink =
+    const smartContractDeploymentLink =
       'https://berkeley.minaexplorer.com/transaction/' + state.deploymentTX;
     deploymentTXInfo = (
       <div>Your smart contract deployment transaction is <a href={smartContractDeploymentLink} target="_blank">{state.deploymentTX}</a></div>
     );
   }
 
-    let accountDoesNotExist;
+  let interactionTXInfo;
+  if (state.interactionTX !== '') {
+    const smartContractInteractionLink =
+      'https://berkeley.minaexplorer.com/transaction/' + state.interactionTX;
+    interactionTXInfo = (
+      <div>Your smart contract interaction transaction is <a href={smartContractInteractionLink} target="_blank">{state.interactionTX}</a></div>
+    );
+  }
+
+  let accountDoesNotExist;
   if (state.hasBeenSetup && !state.accountExists) {
     const faucetLink =
       'https://faucet.minaprotocol.com/?address=' + state.publicKey!.toBase58();
@@ -319,6 +347,8 @@ export default function App() {
     <div>
       {setup}
       {setupSmartContract}
+      {deploymentTXInfo}
+      {interactionTXInfo}
       {accountDoesNotExist}
       {mainContent}
     </div>
