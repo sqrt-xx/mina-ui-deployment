@@ -8,6 +8,12 @@ import { PrivateKey, PublicKey, Field } from 'snarkyjs';
 
 let transactionFee = 0.1;
 
+declare global {
+  interface Window {
+    mina: any; // turn off type checking
+  }
+}
+
 export default function App() {
   let [state, setState] = useState({
     zkappWorkerClient: null as null | ZkappWorkerClient,
@@ -193,17 +199,18 @@ export default function App() {
     </div>
   );
 
-  function handleSmartContractChange(event){
-    const candidateContractPK = event.target.value;;
+  function handleSmartContractChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const candidateContractPK = event.currentTarget.value;
     setState({ ...state, candidateContractPK });
   }
 
-  async function updateContractChange(event) {
+  async function updateContractChange(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     const contractPK = state.candidateContractPK;
     const zkappPublicKey = PublicKey.fromBase58(
       contractPK
     );
 
+    if (!state.zkappWorkerClient) return;
     await state.zkappWorkerClient.initZkappInstance(zkappPublicKey);
 
     console.log('getting zkApp state...');
@@ -216,7 +223,7 @@ export default function App() {
     setState({ ...state, contractPK, zkappPublicKey, currentNum });
   }
 
-  async function deployNewContract(event) {
+  async function deployNewContract() {
     const mina = (window as any).mina;
 
     if (mina == null) {
@@ -241,6 +248,7 @@ export default function App() {
     console.log(contractPK);
 
     console.log('creating deployment transaction...');
+    if (!state.publicKey) return;
     await state.zkappWorkerClient!.createDeployContract(
       privateKey, state.publicKey);
 
