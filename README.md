@@ -2,6 +2,14 @@
 
 ## Introduction
 
+A short background to this project! As a participant of the [zkIgnite Cohort 0]() I implemented a zero-knowledge application called [MAC!]() which stands for "MINA Arbitrated Contracts" which allows one to generate simple (but useful!) zkApps without the need to know any programming!
+
+Unfortunately, the end product came with a flaw. At that moment it was not yet possible to deploy smart contracts using the UI. Because of this, MAC! needed a "private key" mode which was highly insecure. Another zkApp - [Vale](https://wallet.rpanic.com) by [rpanic](https://rpanic.com) which won the zkIgnite Cohort 0 has also been affected by this problem.
+
+In the meantime, signing capabilities of AURO wallet improved and I myself have [fixed a SnarkyJS bug](https://github.com/o1-labs/snarkyjs/pull/931) which was also preventing the deployment. This repository is an enahanced version of the [Tutorial 4](https://docs.minaprotocol.com/zkapps/tutorials/zkapp-ui-with-react) and it serves as a demo of SnarkyJS deployment capabilities with AURO wallet.
+
+Try it! Test it! Let me know if you like it on my [Twitter](https://twitter.com/MarekNarozniak) and visit [my website](https://mareknarozniak.com) to check some more tutorials!
+
 ## Getting started
 
 Once you open the zkApp page you will see the SnarkyJS setup screen. Be patient, it will take a while, the zero-knowledge circuit is being compiled, wallet is connecting to the network etc...
