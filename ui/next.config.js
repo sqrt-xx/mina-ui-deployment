@@ -34,7 +34,8 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  basePath: '/mina-ui-deployment',
+  basePath: process.env.NODE_ENV === 'production' ? '/mina-ui-deployment' : undefined,
+  assetPrefix: process.env.NODE_ENV === 'production' ? '/mina-ui-deployment/' : undefined,
   typescript: {
     // !! WARN !!
     // Dangerously allow production builds to successfully complete even if
