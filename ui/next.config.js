@@ -34,6 +34,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  basePath: '/mina-ui-deployment',
   typescript: {
     // !! WARN !!
     // Dangerously allow production builds to successfully complete even if
